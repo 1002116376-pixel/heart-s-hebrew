@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قلبي - محاكي تفاعلي لعوامل الخطر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #0f172a; font-size: 19px; }
+        h1 { font-size: 2.2rem !important; }
+        h2 { font-size: 1.6rem !important; }
+        h4 { font-size: 1.3rem !important; }
+        .text-sm { font-size: 1.1rem !important; line-height: 1.6; }
+        .text-xs { font-size: 0.95rem !important; }
+        .text-base { font-size: 1.35rem !important; }
+        @keyframes beat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.1); }
+            40% { transform: scale(1.02); }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .heart-active { transform-origin: center; animation: beat 0.8s infinite ease-in-out; }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen p-6 flex flex-col justify-between gap-6">
+    <header class="border-b border-rose-950 bg-slate-900/90 p-5 rounded-xl flex items-center justify-between shadow-md">
+        <div class="flex items-center gap-4">
+            <i class="fa-solid fa-heart-pulse text-rose-500 text-5xl animate-pulse"></i>
+            <div>
+                <h1 class="font-black text-white">قلبي - محاكي تفاعلي لعوامل الخطر</h1>
+                <p class="text-sm text-slate-400 mt-1">العلوم والتكنولوجيا وجهاز الدوران للصف السابع</p>
+            </div>
+        </div>
+        <button id="btn-reset" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-base px-5 py-2.5 rounded-xl border border-slate-700 font-bold transition flex items-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> إعادة ضبط المحاكي
+        </button>
+    </header>
+
+    <main class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-md flex flex-col gap-6">
+        <div class="border-b border-slate-800 pb-4 flex justify-between items-center">
+            <h2 class="font-extrabold text-white flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-rose-500"></i> تأثير نمط الحياة على الأوعية الدموية والقلب في الوقت الفعلي
+            </h2>
+            <span id="status-tag" class="px-4 py-1.5 rounded text-xs font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">وعاء دموي سليم ونظيف</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div class="md:col-span-9 relative bg-slate-950 rounded-xl overflow-hidden p-2 border border-slate-800">
+                <svg id="vessel-svg" viewBox="0 0 600 170" class="w-full h-auto block">
+                    <rect x="0" y="20" width="600" height="130" fill="#180206" />
+                    <rect x="0" y="0" width="600" height="20" fill="#800c1e" />
+                    <rect x="0" y="150" width="600" height="20" fill="#800c1e" />
+                    <g id="lining-top"></g>
+                    <g id="lining-bottom"></g>
+                    <g id="blood-cells"></g>
+                    <path id="fat-block-top" d="M 100,20 Q 300,20 500,20" fill="#fbbf24" opacity="0.95" />
+                    <path id="fat-block-bottom" d="M 100,150 Q 300,150 500,150" fill="#fbbf24" opacity="0.95" />
+                    <g id="vessel-cracks"></g>
+                </svg>
+                <div id="danger-overlay" class="hidden absolute inset-0 bg-red-950/80 flex flex-col items-center justify-center text-center p-4">
+                    <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 animate-bounce mb-2"></i>
+                    <h4 class="text-white font-black">الشريان مسدود وضيق بشكل خطير!</h4>
+                    <p class="text-sm text-red-300 mt-1">يجد الدم صعوبة بالغة في الوصول إلى عضلة القلب!</p>
+                </div>
+            </div>
+
+            <div class="md:col-span-3 bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center gap-3">
+                <svg id="heart-graphic" viewBox="0 0 100 100" class="w-20 h-20 heart-active">
+                    <path d="M12,35 C12,17 35,12 50,28 C65,12 88,17 88,35 C88,60 50,90 50,90 C50,90 12,60 12,35 Z" fill="#f43f5e" />
+                </svg>
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400">نبض القلب</h4>
+                    <span id="heart-rate-text" class="text-xl text-rose-300 font-extrabold">72 نبضة/دقيقة</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-3 text-center text-sm text-slate-400 bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-center gap-2"><span class="w-4 h-4 rounded-full bg-rose-600 inline-block"></span><span>الدم (أحمر)</span></div>
+            <div class="flex items-center justify-center gap-2"><span class="w-4 h-4 rounded-full bg-yellow-400 inline-block"></span><span>الدهون (أصفر)</span></div>
+            <div class="flex items-center justify-center gap-2"><span class="w-4 h-4 rounded-full bg-purple-500 inline-block"></span><span>التوتر (بنفسجي)</span></div>
+            <div class="flex items-center justify-center gap-2"><span class="w-4 h-4 rounded-full bg-slate-400 inline-block"></span><span>الدخان (رمادي)</span></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="space-y-2 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div class="flex justify-between items-center text-base"><span class="font-bold text-slate-200"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i> التوتر والضغط النفسي</span><span id="stress-val" class="font-extrabold text-amber-400 bg-amber-500/10 px-3 py-1 rounded">هادئ ومستقر</span></div>
+                <input type="range" id="input-stress" min="1" max="5" value="1" class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500">
+            </div>
+            <div class="space-y-2 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div class="flex justify-between items-center text-base"><span class="font-bold text-slate-200"><i class="fa-solid fa-pizza-slice text-yellow-400 mr-1"></i> التغذية (الدهون المشبعة)</span><span id="diet-val" class="font-extrabold text-yellow-400 bg-yellow-500/10 px-3 py-1 rounded">صحي ومتوازن</span></div>
+                <input type="range" id="input-diet" min="1" max="5" value="1" class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-yellow-500">
+            </div>
+            <div class="space-y-2 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div class="flex justify-between items-center text-base"><span class="font-bold text-slate-200"><i class="fa-solid fa-smoking text-slate-300 mr-1"></i> التعرض للدخان والسجائر</span><span id="smoking-val" class="font-extrabold text-slate-300 bg-slate-500/10 px-3 py-1 rounded">هواء نقي</span></div>
+                <input type="range" id="input-smoking" min="0" max="3" value="0" class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-slate-400">
+            </div>
+            <div class="space-y-2 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div class="flex justify-between items-center text-base"><span class="font-bold text-slate-200"><i class="fa-solid fa-person-running text-emerald-400 mr-1"></i> النشاط البدني</span><span id="sport-val" class="font-extrabold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded">لا يوجد نشاط</span></div>
+                <input type="range" id="input-sport" min="1" max="4" value="1" class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block">صحة القلب</span>
+                <h4 id="stat-health" class="font-black text-emerald-400 mt-1">100%</h4>
+                <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden"><div id="bar-health" class="bg-emerald-500 h-full w-full transition-all"></div></div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block">ضغط الدم</span>
+                <h4 id="stat-bp" class="font-black text-emerald-400 mt-1">115 mmHg</h4>
+                <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden"><div id="bar-bp" class="bg-emerald-500 h-full w-[25%] transition-all"></div></div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block">انسداد الشريان</span>
+                <h4 id="stat-clog" class="font-black text-emerald-400 mt-1">0%</h4>
+                <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden"><div id="bar-clog" class="bg-emerald-500 h-full w-0 transition-all"></div></div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                <span class="text-xs font-bold text-slate-400 block">الجهد والعبء</span>
+                <h4 id="stat-workload" class="text-sm font-black text-slate-200 mt-1">خفيف وطبيعي</h4>
+                <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden"><div id="bar-workload" class="bg-emerald-500 h-full w-[20%] transition-all"></div></div>
+            </div>
+        </div>
+
+        <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800 text-base text-slate-300 leading-relaxed">
+            <p class="font-bold text-rose-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> التحليل العلمي الموجه بالمحاكاة:</p>
+            <p id="dynamic-expl-text">القلب في حالة ممتازة! الأوعية الدموية واسعة ونظيفة، وضغط الدم متوازن. يتدفق الدم بسهولة وسرعة مزودًا الجسم بالأكسجين.</p>
+        </div>
+    </main>
+
+    <script>
+        const state = { stress: 1, diet: 1, smoking: 0, bp: 115, sport: 1, clogPercent: 0, workload: 20 };
+        const inputs = { stress: document.getElementById('input-stress'), diet: document.getElementById('input-diet'), smoking: document.getElementById('input-smoking'), sport: document.getElementById('input-sport') };
+        const displays = { stress: document.getElementById('stress-val'), diet: document.getElementById('diet-val'), smoking: document.getElementById('smoking-val'), sport: document.getElementById('sport-val') };
+
+        function initVesselLining() {
+            const topGroup = document.getElementById('lining-top'); const bottomGroup = document.getElementById('lining-bottom');
+            if (!topGroup || !bottomGroup) return; topGroup.innerHTML = ''; bottomGroup.innerHTML = '';
+            const cellCount = 24; const cellWidth = 600 / cellCount;
+            for(let i = 0; i < cellCount; i++) {
+                const x = i * cellWidth;
+                const r1 = document.createElementNS("http://www.w3.org/2000/svg", "rect"); r1.setAttribute("x", x + 1); r1.setAttribute("y", "20"); r1.setAttribute("width", cellWidth - 2); r1.setAttribute("height", "8"); r1.setAttribute("rx", "2"); r1.setAttribute("fill", "#fca5a5"); r1.setAttribute("class", "lining-cell"); topGroup.appendChild(r1);
+                const r2 = document.createElementNS("http://www.w3.org/2000/svg", "rect"); r2.setAttribute("x", x + 1); r2.setAttribute("y", "142"); r2.setAttribute("width", cellWidth - 2); r2.setAttribute("height", "8"); r2.setAttribute("rx", "2"); r2.setAttribute("fill", "#fca5a5"); r2.setAttribute("class", "lining-cell"); bottomGroup.appendChild(r2);
+            }
+        }
+
+        const particles = []; const maxParticles = 60;
+        function initParticles() {
+            const container = document.getElementById('blood-cells'); if (!container) return;
+            container.innerHTML = ''; particles.length = 0;
+            for(let i=0; i < maxParticles; i++) {
+                const p = { x: Math.random() * 600, y: 35 + Math.random() * 100, size: 6.5, color: '#dc2626', speed: 1.2 + Math.random() * 2 };
+                const el = document.createElementNS("http://www.w3.org/2000/svg", "circle"); el.setAttribute("cx", p.x); el.setAttribute("cy", p.y); el.setAttribute("r", p.size); el.setAttribute("fill", p.color); container.appendChild(el); p.el = el; particles.push(p);
+            }
+        }
+
+        function refreshSimulation() {
+            displays.stress.textContent = ["هادئ ومستقر", "متوتر قليلاً", "توتر متوسط", "متوتر جداً!", "توتر شديد!"][state.stress - 1];
+            displays.diet.textContent = ["صحي ومتوازن", "بعض المقرمشات", "طعام غير صحي", "الكثير من الدهون", "وجبات سريعة فقط!"][state.diet - 1];
+            displays.smoking.textContent = ["هواء نقي", "تعرض خفيف", "تعرض متوسط", "مدخن شره"][state.smoking];
+            displays.sport.textContent = ["لا يوجد نشاط", "رياضة أسبوعية", "تمارين منتظمة", "رياضي نشط!"][state.sport - 1];
+
+            const baseClog = (state.diet - 1) * 20; const sportClogDiscount = (state.sport - 1) * 8; const smokingClogAdd = state.smoking * 8;
+            const clogPercent = Math.min(95, Math.max(0, Math.round(baseClog - sportClogDiscount + smokingClogAdd))); state.clogPercent = clogPercent;
+
+            const calculatedBP = 115 + ((state.stress - 1) * 9) + (state.smoking * 7) + Math.round(clogPercent * 0.25) - ((state.sport - 1) * 4);
+            state.bp = Math.min(200, Math.max(90, calculatedBP));
+            const pressureExcess = Math.max(0, state.bp - 120);
+            const liningDamage = Math.min(100, Math.max(0, Math.round(((pressureExcess * 1.3) + (state.smoking * 15)) - ((state.sport - 1) * 10))));
+            const workload = Math.min(100, Math.max(10, Math.round((state.stress * 15) + (pressureExcess * 1.5) + (clogPercent * 0.4)))); state.workload = workload;
+            const healthScore = Math.max(0, 100 - Math.round((clogPercent * 0.5) + (liningDamage * 0.3) + (state.stress * 4)));
+
+            const explBox = document.getElementById('dynamic-expl-text');
+            if (explBox) {
+                if (clogPercent > 60) explBox.innerHTML = "<strong>انتبه!</strong> التراكم العالي للدهون يعيق مرور الدم. يرتفع ضغط الدم للتمكن من دفع الدم عبر الشرايين المتضيقة.";
+                else if (liningDamage > 50) explBox.innerHTML = "<strong>تحذير من تلف جدران الشرايين:</strong> ضغط الدم المرتفع يتسبب في تشقق جدران الشرايين وتلفها، مما يسهل التصاق الدهون بها.";
+                else if (state.stress > 3) explBox.innerHTML = "<strong>تأثير الضغط النفسي:</strong> يتسبب التوتر في انقباض فوري للأوعية الدموية وارتفاع حاد في نبض وضغط الدم، مما يجهد عضلة القلب.";
+                else if (state.sport > 2) explBox.innerHTML = "<strong>تأثير إيجابي:</strong> النشاط البدني يقوي عضلة القلب، ويساعد على توسيع الأوعية الدموية وتقليل ضغط الدم بشكل ملحوظ.";
+                else explBox.innerHTML = "القلب في حالة ممتازة! الأوعية الدموية واسعة ونظيفة، وضغط الدم متوازن. يتدفق الدم بسهولة وسرعة مزودًا الجسم بالأكسجين.";
+            }
+
+            document.getElementById('stat-health').textContent = `${healthScore}%`; document.getElementById('bar-health').style.width = `${healthScore}%`;
+            document.getElementById('stat-bp').textContent = `${state.bp} mmHg`; document.getElementById('bar-bp').style.width = `${Math.min(100, Math.max(0, Math.round(((state.bp - 90) / 110) * 100)))}%`;
+            document.getElementById('stat-clog').textContent = `${clogPercent}%`; document.getElementById('bar-clog').style.width = `${clogPercent}%`;
+            document.getElementById('stat-workload').textContent = `${workload > 65 ? 'إجهاد مفرط!' : workload > 35 ? 'مجهد' : 'خفيف وطبيعي'} (${workload}%)`; document.getElementById('bar-workload').style.width = `${workload}%`;
+
+            const calculatedHR = Math.round(72 + (state.stress * 12) + (state.smoking * 8) - ((state.sport - 1) * 3));
+            document.getElementById('heart-rate-text').textContent = `${calculatedHR} نبضة في الدقيقة`;
+            document.getElementById('heart-graphic').style.animation = `beat ${60 / calculatedHR}s infinite ease-in-out`;
+
+            const fatBlockTop = document.getElementById('fat-block-top'); const fatBlockBottom = document.getElementById('fat-block-bottom');
+            if (fatBlockTop && fatBlockBottom) {
+                const visualClog = (clogPercent / 100) * 45;
+                fatBlockTop.setAttribute('d', `M 100,20 Q 300,${20 + visualClog} 500,20`);
+                fatBlockBottom.setAttribute('d', `M 100,150 Q 300,${150 - visualClog} 500,150`);
+            }
+
+            document.querySelectorAll('.lining-cell').forEach(cell => { cell.setAttribute("fill", state.bp >= 150 ? "#f87171" : state.bp >= 130 ? "#fb923c" : "#fca5a5"); });
+            const tag = document.getElementById('status-tag');
+            if (tag) {
+                if(clogPercent < 20 && liningDamage < 30) { tag.textContent = "وعاء دموي سليم ونظيف"; tag.className = "px-4 py-1.5 rounded text-xs font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"; document.getElementById('danger-overlay').classList.add('hidden'); }
+                else if(clogPercent < 55) { tag.textContent = "انسداد أولي"; tag.className = "px-4 py-1.5 rounded text-xs font-extrabold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"; document.getElementById('danger-overlay').classList.add('hidden'); }
+                else { tag.textContent = "شريان مسدود وخطير!"; tag.className = "px-4 py-1.5 rounded text-xs font-extrabold bg-red-500/10 text-red-400 border border-red-500/20 animate-pulse"; document.getElementById('danger-overlay').classList.remove('hidden'); }
+            }
+
+            particles.forEach((p, idx) => {
+                const ratio = idx / maxParticles;
+                if (state.smoking > 0 && ratio < (state.smoking * 0.22)) { p.color = '#94a3b8'; p.size = 4.5; }
+                else if (state.diet > 1 && ratio >= 0.3 && ratio < 0.3 + ((state.diet - 1) * 0.16)) { p.color = '#fbbf24'; p.size = 5.5; }
+                else if (state.stress > 1 && ratio >= 0.7 && ratio < 0.7 + ((state.stress - 1) * 0.08)) { p.color = '#c084fc'; p.size = 5; }
+                else { p.color = '#e11d48'; p.size = 6.5; }
+                if (p.el) { p.el.setAttribute("fill", p.color); p.el.setAttribute("r", p.size); }
+            });
+        }
+
+        function runAnimation() {
+            try {
+                const flowSpeed = Math.max(0.3, (1.6 * (state.workload / 50)) * (1 - ((state.clogPercent / 100) * 0.85)));
+                particles.forEach(p => {
+                    p.x += flowSpeed * p.speed * 0.6;
+                    if(p.x > 600) { p.x = 0; p.y = 35 + Math.random() * 100; }
+                    const bound = (state.clogPercent / 100) * 42;
+                    if (p.y < 26 + bound) p.y += 1.0; if (p.y > 144 - bound) p.y -= 1.0;
+                    if (p.el) { p.el.setAttribute("cx", p.x); p.el.setAttribute("cy", p.y); }
+                });
+                const cracksContainer = document.getElementById('vessel-cracks');
+                if (cracksContainer) {
+                    cracksContainer.innerHTML = '';
+                    if (state.bp >= 130) {
+                        const count = Math.round((state.bp - 120) * 0.15);
+                        for (let i = 0; i < count; i++) {
+                            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                            const cx = 80 + Math.random() * 440; const cy = Math.random() > 0.5 ? 20 : 150;
+                            line.setAttribute("x1", cx); line.setAttribute("y1", cy - 3); line.setAttribute("x2", cx + 4); line.setAttribute("y2", cy + 3); line.setAttribute("stroke", "#f87171"); line.setAttribute("stroke-width", "2"); cracksContainer.appendChild(line);
+                        }
+                    }
+                }
+            } catch (err) {}
+            requestAnimationFrame(runAnimation);
+        }
+
+        inputs.stress.addEventListener('input', (e) => { state.stress = parseInt(e.target.value); refreshSimulation(); });
+        inputs.diet.addEventListener('input', (e) => { state.diet = parseInt(e.target.value); refreshSimulation(); });
+        inputs.smoking.addEventListener('input', (e) => { state.smoking = parseInt(e.target.value); refreshSimulation(); });
+        inputs.sport.addEventListener('input', (e) => { state.sport = parseInt(e.target.value); refreshSimulation(); });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            inputs.stress.value = 1; inputs.diet.value = 1; inputs.smoking.value = 0; inputs.sport.value = 1;
+            state.stress = 1; state.diet = 1; state.smoking = 0; state.sport = 1; state.bp = 115; state.clogPercent = 0; state.workload = 20; refreshSimulation();
+        });
+
+        function startSimulation() { initVesselLining(); initParticles(); refreshSimulation(); runAnimation(); }
+        window.addEventListener('DOMContentLoaded', startSimulation);
+    </script>
+</body>
+</html>
